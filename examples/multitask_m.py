@@ -38,7 +38,6 @@
 #| had knowledge of the CeCILL license and that you accept its terms.
 #
 
-import kinematic_arm
 import math
 import numpy as np
 import sys
