@@ -50,13 +50,13 @@ from sklearn.cluster import KMeans
 default_params = \
     {
         # more of this -> higher-quality CVT
-        "cvt_samples": 25000,
+        "cvt_samples": 15000,
         # we evaluate in batches to paralleliez
-        "batch_size": 100,
+        "batch_size": 10,
         # proportion of niches to be filled before starting
         "random_init": 0.1,
         # batch for random initialization
-        "random_init_batch": 100,
+        "random_init_batch": 10,
         # when to write results (one generation = one batch)
         "dump_period": 10000,
         # do we use several cores?
@@ -209,6 +209,22 @@ def parallel_eval(evaluate_function, to_evaluate, pool, params):
         s_list = map(evaluate_function, to_evaluate)
     return list(s_list)
 
+def mutate(ind):
+    z = ind
+    # select a random trait
+    T_x = random.randint(0, 9)
+    # select a random trait different from previous one
+    T_y = random.choice([i for i in range(0, 10) if i != T_x])
+
+    #Avoid ind[T_x] to go lower then 0 and ind[T_y] to go higher then 1
+    step = np.random.uniform(0, min(ind[T_x], (-ind[T_y] + 1)))
+
+    z[T_x] -= step
+    z[T_y] += step
+    return z
+
+
+
 # format: fitness, centroid, desc, genome \n
 # fitness, centroid, desc and x are vectors
 def __save_archive(archive, gen):
@@ -223,3 +239,4 @@ def __save_archive(archive, gen):
             write_array(k.desc, f)
             write_array(k.x, f)
             f.write("\n")
+
